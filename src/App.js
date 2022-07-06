@@ -1,4 +1,5 @@
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { useAuthContext } from './hooks/useAuthContext'
 import './App.css'
 
 import Dashboard from './pages/dashboard/Dashboard'
@@ -8,27 +9,33 @@ import Create from './pages/create/Create'
 import Project from './pages/project/Project'
 
 function App() {
+  const { authIsReady, user } = useAuthContext()
   return (
     <div className='App'>
       <BrowserRouter>
         <div className='container'>
-          <Switch>
-            <Route exact path='/'>
-              <Dashboard />
-            </Route>
-            <Route path='/create'>
-              <Create />
-            </Route>
-            <Route path='/login'>
-              <Login />
-            </Route>
-            <Route path='/signup'>
-              <Signup />
-            </Route>
-            <Route path='/projects/:id'>
-              <Project />
-            </Route>
-          </Switch>
+          <Routes>
+            <Route
+              path='/'
+              element={user ? <Dashboard /> : <Navigate to='/login' />}
+            ></Route>
+            <Route
+              path='/create'
+              element={user ? <Create /> : <Navigate to='/login' />}
+            ></Route>
+            <Route
+              path='/projects/:id'
+              element={user ? <Project /> : <Navigate to='/login' />}
+            ></Route>
+            <Route
+              path='/login'
+              element={user ? <Login /> : <Dashboard />}
+            ></Route>
+            <Route
+              path='/signup'
+              element={user ? <Navigate to='/' /> : <Signup />}
+            ></Route>
+          </Routes>
         </div>
       </BrowserRouter>
     </div>
