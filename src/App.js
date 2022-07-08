@@ -14,39 +14,36 @@ function App() {
   const { authIsReady, user } = useAuthContext()
   return (
     <div className='App'>
-      <BrowserRouter>
-        <Sidebar />
-        <div className='container'>
-          <Navbar />
-          <Routes>
-            <Route
-              path='/'
-              // element={user ? <Dashboard /> : <Navigate to='/login' />}
-              element={<Dashboard />}
-            ></Route>
-            <Route
-              path='/create'
-              // element={user ? <Create /> : <Navigate to='/login' />}
-              element={<Create />}
-            ></Route>
-            <Route
-              path='/projects/:id'
-              // element={user ? <Project /> : <Navigate to='/login' />}
-              element={<Project />}
-            ></Route>
-            <Route
-              path='/login'
-              // element={user ? <Login /> : <Dashboard />}
-              element={<Login />}
-            ></Route>
-            <Route
-              path='/signup'
-              // element={user ? <Navigate to='/' /> : <Signup />}
-              element={<Signup />}
-            ></Route>
-          </Routes>
-        </div>
-      </BrowserRouter>
+      {authIsReady && (
+        <BrowserRouter>
+          <Sidebar />
+          <div className='container'>
+            <Navbar />
+            <Routes>
+              <Route
+                path='/'
+                element={user ? <Dashboard /> : <Navigate to='/login' />}
+              ></Route>
+              <Route
+                path='/create'
+                element={user ? <Create /> : <Navigate to='/login' />}
+              ></Route>
+              <Route
+                path='/projects/:id'
+                element={user ? <Project /> : <Navigate to='/login' />}
+              ></Route>
+              <Route
+                path='/login'
+                element={user ? <Navigate to='/' /> : <Login />}
+              ></Route>
+              <Route
+                path='/signup'
+                element={user ? <Navigate to='/' /> : <Signup />}
+              ></Route>
+            </Routes>
+          </div>
+        </BrowserRouter>
+      )}
     </div>
   )
 }
