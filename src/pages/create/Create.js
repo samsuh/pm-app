@@ -15,7 +15,7 @@ const categories = [
 ]
 export default function Create() {
   const navigate = useNavigate()
-  const { addDocument, response } = useFirestore('projects ')
+  const { addDocument, response } = useFirestore('projects')
   const [users, setUsers] = useState([])
   const { documents } = useCollection('users')
   const { user } = useAuthContext()
