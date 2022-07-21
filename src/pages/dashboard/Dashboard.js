@@ -1,49 +1,60 @@
-import './Dashboard.css'
+import { useState } from 'react'
 import { useCollection } from '../../hooks/useCollection'
-import ProjectList from '../../components/ProjectList'
+import { useAuthContext } from '../../hooks/useAuthContext'
 
-//testing
-// import { projectFirestore } from '../../firebase/config'
-// import { useEffect, useState } from 'react'
+// components
+import ProjectList from '../../components/ProjectList'
+import ProjectFilter from './ProjectFilter'
+
+// styles
+import './Dashboard.css'
 
 export default function Dashboard() {
-  // const [data, setData] = useState(null)
-  // const [isPending, setIsPending] = useState(false)
-  // const [error, setError] = useState(false)
-  // useEffect(() => {
-  //   setIsPending(true)
-  //   projectFirestore
-  //     .collection('projects')
-  //     .get()
-  //     .then((snapshot) => {
-  //       if (snapshot.empty) {
-  //         setError('projects collection is empty')
-  //         setIsPending(false)
-  //       } else {
-  //         // let results = []
-  //         // snapshot.docs.forEach((doc) => {
-  //         //   results.push({ id: doc.id, ...doc.data() })
-  //         // })
-  //         // console.log('results from Dashboard is: ', results)
-  //         // setData(results)
-  //         // console.log('data is now set from results as ', data)
-  //         // setIsPending(false)
-  //         console.log('snapshot from useEffect in Dashboard: ', snapshot)
-  //       }
-  //     })
-  //     .catch((err) => setError(err.message))
-  //   setIsPending(false)
-  // }, [])
-
+  const { user } = useAuthContext()
   const { documents, error } = useCollection('projects')
-  console.log('documents from useCollection', documents)
+
+  const [currentFilter, setCurrentFilter] = useState('all')
+
+  const changeFilter = (newFilter) => {
+    setCurrentFilter(newFilter)
+  }
+
+  const filteredProjects = documents
+    ? documents.filter((document) => {
+        switch (currentFilter) {
+          case 'all':
+            return true
+          case 'mine':
+            let assignedToMe = false
+            document.assignedUsersList.forEach((u) => {
+              if (u.id === user.uid) {
+                assignedToMe = true
+              }
+            })
+            return assignedToMe
+          case 'development':
+          case 'design':
+          case 'sales':
+          case 'marketing':
+            console.log(document.category, currentFilter)
+            return document.category === currentFilter
+          default:
+            return true
+        }
+      })
+    : null
 
   return (
     <div>
       <h2 className='page-title'>Dashboard</h2>
       {error && <p className='error'>{error}</p>}
-      {documents && <ProjectList projects={documents} />}
-      {/* {data ? data : 'data is null'} */}
+      {documents && (
+        <ProjectFilter
+          currentFilter={currentFilter}
+          changeFilter={changeFilter}
+        />
+      )}
+      {filteredProjects && <ProjectList projects={filteredProjects} />}
     </div>
   )
 }
