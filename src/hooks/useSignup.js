@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import {
-  projectAuth,
-  projectStorage,
-  projectFirestore,
+  // projectAuth,
+  auth,
+  // projectStorage,
+  storage,
+  // projectFirestore,
+  db,
 } from '../firebase/config'
 import { useAuthContext } from './useAuthContext'
 
@@ -18,10 +21,7 @@ export const useSignup = () => {
 
     try {
       // signup
-      const res = await projectAuth.createUserWithEmailAndPassword(
-        email,
-        password
-      )
+      const res = await auth.createUserWithEmailAndPassword(email, password)
 
       if (!res) {
         throw new Error('Could not complete signup')
@@ -29,14 +29,15 @@ export const useSignup = () => {
 
       //uploade user profile image
       const uploadPath = `thumbnails/${res.user.uid}/${thumbnail.name}`
-      const img = await projectStorage.ref(uploadPath).put(thumbnail)
+      const img = await storage.ref(uploadPath).put(thumbnail)
       const imgURL = await img.ref.getDownloadURL()
 
       // add display name to user
       await res.user.updateProfile({ displayName, photoURL: imgURL })
 
       //create user document
-      await projectFirestore.collection('users').doc(res.user.uid).set({
+      // await projectFirestore.collection('users').doc(res.user.uid).set({
+      await db.collection('users').doc(res.user.uid).set({
         online: true,
         displayName,
         photoURL: imgURL,

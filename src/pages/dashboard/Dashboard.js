@@ -11,6 +11,7 @@ import './Dashboard.css'
 
 export default function Dashboard() {
   const { user } = useAuthContext()
+  // const { documents, error } = useCollection('projects')
   const { documents, error } = useCollection('projects')
 
   const [currentFilter, setCurrentFilter] = useState('all')
